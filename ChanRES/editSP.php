@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+body {
+  background-image: url('./nenthemnhanvien.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  font-family: 'Roboto', sans-serif;
+
+}
+.main {
+            padding: 1rem;
+        }
+        .section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1.5rem;
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .footer {
+            background-color: #38a169;
+            color: white;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .headerr {
+            background-color: #38a169;
+            color: white;
+            padding: 1rem;
+        }
+</style>
+<style>
+         div#bigBox {width:auto; 
+                     height:500px; 
+                    
+                     padding: 106px 192px 23px 123px;
+                     }
+        </style>  
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHỈNH SỬA SP</title>
+
+    <!-- Liên kết CSS Bootstrap bằng CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <?php
+ 
+    // Truy vấn database
+    // 1. Include file cấu hình kết nối đến database, khởi tạo kết nối $conn
+    //include_once(__DIR__ . '/../dbconnect.php');
+    $conn = mysqli_connect('localhost', 'root', '', 'danhmucsp') ;
+
+    // 2. Chuẩn bị câu truy vấn $sqlSelect, lấy dữ liệu ban đầu của record cần update
+    // Lấy giá trị khóa chính được truyền theo dạng QueryString Parameter key1=value1&key2=value2...
+    $ID = $_GET['ID'];
+    $sqlSelect = "SELECT * FROM `tbl_khoa` WHERE ID='".$ID."';";
+
+    // 3. Thực thi câu truy vấn SQL để lấy về dữ liệu ban đầu của record cần update
+    $resultSelect = mysqli_query($conn, $sqlSelect);
+    $Khoa_Row = mysqli_fetch_array($resultSelect, MYSQLI_ASSOC); // 1 record
+
+    // Nếu không tìm thấy dữ liệu -> thông báo lỗi
+    if(empty($Khoa_Row)) {
+        echo "Giá trị id: $id không tồn tại. Vui lòng kiểm tra lại.";
+        die;
+    }
+    ?>
+    
+    <!-- Main content -->
+
+    <body class="bg-gray-100">
+    <header class="headerr">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1>Chạn.Restaurant</h1>
+        </div>
+    </header>
+        <div id="bigBox">
+        <form   name="frmEdit" id="frmEdit" method="post" action="" class="form">
+        <main class="main container mx-auto p-4">
+        <section class="section bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4">Chỉnh sửa Sản Phẩm</h2>
+            <form>
+           
+                <div class="form-group">
+                    <label for="product-name">Tên Sản Phẩm</label>
+                    <input id="tensanpham" name="tensanpham" placeholder="Nhập tên sản phẩm" type="text" value="<?php echo $Khoa_Row['tensanpham'] ?>"/>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Giá</label>
+                    <input id="gia" name="gia" placeholder="Nhập giá sản phẩm" type="VARCHAR" value="<?php echo $Khoa_Row['gia'] ?>" />
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Ảnh Mô Tả</label>
+                    <input type="file" name="anhmota" id="anhmota" />               
+                <div class="form-actions">
+                    <button class="btn btn-primary" name="btnSave" >
+                        Sửa Sản Phẩm
+                    </button>
+                    <a href="admin.php"><button class="btn btn-primary" type="reset">
+                        Hủy Bỏ
+                    </button></a>
+                </div>
+            </form>
+        </section>
+    </main>
+        </form>
+        </div>
+
+        
+
+
+    <?php
+    // 4. Nếu người dùng có bấm nút Đăng ký thì thực thi câu lệnh UPDATE
+    if (isset($_POST['btnSave'])) {
+        // Lấy dữ liệu người dùng hiệu chỉnh gởi từ REQUEST POST
+        $tensanpham = $_POST['tensanpham'];
+        $gia = $_POST['gia'];
+        $anhmota = $_POST['anhmota'];
+       
+        //$AnhDaiDien = $_POST['AnhDaiDien'];
+        //$updated_at = date('Y-m-d H:i:s'); // Lấy ngày giờ hiện tại theo định dạng `Năm-Tháng-Ngày Giờ-Phút-Giây`. Vd: 2020-02-18 09:12:12
+
+        // Câu lệnh UPDATE
+        $sql = "UPDATE tbl_khoa SET tensanpham='$tensanpham',gia='$gia',anhmota='$anhmota'  WHERE ID='".$ID."';";
+
+        // Thực thi UPDATE
+        mysqli_query($conn, $sql);
+
+        // Đóng kết nối
+        mysqli_close($conn);
+
+        // Sau khi cập nhật dữ liệu, tự động điều hướng về trang Danh sách
+        header('location:admin.php');
+    }
+    ?>
+
+    <!-- Liên kết JS Jquery bằng CDN -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+
+    <!-- Liên kết JS Popper bằng CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <!-- Liên kết JS Bootstrap bằng CDN -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- Liên kết JS FontAwesome bằng CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+</body>
+
+</html>
